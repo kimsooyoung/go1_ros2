@@ -22,6 +22,11 @@ UnitreeJoyCmd::UnitreeJoyCmd() : Node("unitree_joy_cmd") {
   bodyheight_gain_ = this->declare_parameter("bodyheight_gain", 0.2);
   speed_gain_ = this->declare_parameter("speed_gain", 1.0);
 
+  // HIGHLEVEL Control Flag is 238
+  unitree_cmd_msg_.head[0] = 0xFE;
+  unitree_cmd_msg_.head[1] = 0xEF;
+  unitree_cmd_msg_.level_flag = 238;
+
   printf("roll_gain : %f\n", roll_gain_);
   printf("pitch_gain : %f\n", pitch_gain_);
   printf("yaw_gain : %f\n", yaw_gain_);
