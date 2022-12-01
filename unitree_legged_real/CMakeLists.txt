@@ -19,23 +19,31 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ros2_unitree_legged_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+
 
 message("-- CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "x86_64.*")
-set(ARCH amd64)
+  set(ARCH amd64)
+  set(LEGGED_SDK_DIR "/home/kimsooyoung/Documents/unitree_legged_sdk_v3.5.1")
 else()
-set(ARCH arm64)
+  set(ARCH arm64)
+  set(LEGGED_SDK_DIR "/home/unitree/Unitree/sdk/unitree_legged_sdk")
 endif()
-set(EXTRA_LIBS -pthread libunitree_legged_sdk_${ARCH}.so lcm)
+  set(EXTRA_LIBS -pthread libunitree_legged_sdk_${ARCH}.so lcm)
 
 set(CMAKE_CXX_FLAGS "-O3")
 
 include_directories(
     include
-    "/home/unitree/Unitree/sdk/unitree_legged_sdk/include"
+    ${LEGGED_SDK_DIR}/include
 )
 
-link_directories("/home/unitree/Unitree/sdk/unitree_legged_sdk/lib")
+link_directories(${LEGGED_SDK_DIR}/lib)
 
 add_executable(ros2_udp src/ros2_udp.cpp)
 target_link_libraries(ros2_udp ${EXTRA_LIBS})
@@ -49,8 +57,22 @@ add_executable(ros2_position_example src/ros2_position_example.cpp)
 target_link_libraries(ros2_position_example ${EXTRA_LIBS})
 ament_target_dependencies(ros2_position_example rclcpp ros2_unitree_legged_msgs)
 
+add_executable(ros_state_helper src/ros_state_helper.cpp)
+target_link_libraries(ros_state_helper ${EXTRA_LIBS})
+ament_target_dependencies(ros_state_helper
+  tf2  
+  rclcpp
+  tf2_ros
+  nav_msgs
+  sensor_msgs
+  geometry_msgs
+  ros2_unitree_legged_msgs
+)
+
+
 install(TARGETS
     ros2_udp
+    ros_state_helper
     ros2_walk_example
     ros2_position_example
     DESTINATION lib/${PROJECT_NAME}
