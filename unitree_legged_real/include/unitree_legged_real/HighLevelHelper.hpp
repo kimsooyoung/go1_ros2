@@ -106,11 +106,11 @@ public:
         std::chrono::milliseconds(20),
         std::bind(&HighLevelHelper::timerCallback, this));
 
-    // high_sub_ =
-    //     this->create_subscription<ros2_unitree_legged_msgs::msg::HighState>(
-    //         "high_state", 10,
-    //         std::bind(&HighLevelHelper::highStateCallback, this,
-    //                   std::placeholders::_1));
+    high_sub_ =
+        this->create_subscription<ros2_unitree_legged_msgs::msg::HighState>(
+            "high_state", 10,
+            std::bind(&HighLevelHelper::highStateCallback, this,
+                      std::placeholders::_1));
 
     // control_sub_ = nh->subscribe("untiree_quadrupped_high_cmd", 10,
     // &HighLevelHelper::controlSubCallback, this);
