@@ -14,9 +14,9 @@ ros2 launch unitree_joy_cmd eloquent_joy_cmd.launch.py
 ros2 run joy joy_node
 ```
 
-
-
 # TODO
+[] 3D option param
+[] sit down & yaw jump
 [] keyboard cmd
 [] low level cmd
 [] camera sub - composition

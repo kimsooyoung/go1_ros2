@@ -1,0 +1,30 @@
+sudo apt install ros-eloquent-nav2-*
+sudo apt install ros-eloquent-joint-state-publisher -y
+sudo apt install ros-eloquent-slam-toolbox -y
+
+libnav2_compute_path_to_pose_action_bt_node.so: undefined symbol
+> https://github.com/ros-planning/navigation2/issues/1948 
+git clone https://github.com/Adlink-ROS/BehaviorTree.CPP.git
+> string(REPLACE "." "0" Boost_VERSION_NODOT "${Boost_VERSION}")
+---
+$ ros2 run unitree_legged_real ros2_udp highlevel
+UDP Initialized. socketfd: 3   Port: 8080
+UDP Initialized. socketfd: 4   Port: 8090
+high level runing!
+
+$ ros2 run unitree_legged_real ros_state_helper
+imu_link_id : imu_link
+base_link_id : base_link
+odom_link_id : odom
+publish_tf : true
+verbose : false
+
+$ ros2 launch unitree_joy_cmd eloquent_joy_cmd.launch.py
+
+$ ros2 ruy joy_node
+---
+
+
+/home/unitree/Unitree/ros2_ws/install/ti_mmwave_ros2_examples/share/ti_mmwave_ros2_examples/map/hy_map.pgm
+
+nav2 libnav2_compute_path_to_pose_action_bt_node.so: undefined symbol
