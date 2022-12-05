@@ -56,6 +56,7 @@ private:
   // ROS Parameters
   bool publish_tf_;
   bool verbose_;
+  bool dimension_3d_;
   std::string imu_link_id_, base_link_id_, odom_link_id_;
 
 public:
@@ -83,6 +84,7 @@ public:
 
     publish_tf_ = this->declare_parameter("publish_tf", true);
     verbose_ = this->declare_parameter("verbose", false);
+    dimension_3d_ = this->declare_parameter("dimension_3d", false);
 
     printf("imu_link_id : %s\n", imu_link_id_.c_str());
     printf("base_link_id : %s\n", base_link_id_.c_str());
@@ -90,6 +92,7 @@ public:
 
     printf("publish_tf : %s\n", publish_tf_ ? "true" : "false");
     printf("verbose : %s\n", verbose_ ? "true" : "false");
+    printf("dimension_3d : %s\n", dimension_3d_ ? "true" : "false");
 
     /// imu 오차 발생 시 보정을 위한 offset
     q_offset_.setRPY(0, 0, 3.1415);
@@ -192,7 +195,9 @@ public:
     // 위치 데이터 - 굴곡진 환경에서 큰 오차를 보이므로 완전히 신뢰할 수는 없다.
     dog_odom_.pose.pose.position.x = (msg->position)[0];
     dog_odom_.pose.pose.position.y = (msg->position)[1];
-    dog_odom_.pose.pose.position.z = (msg->position)[2];
+    if(dimension_3d_)
+      dog_odom_.pose.pose.position.z = (msg->position)[2];
+    
     dog_odom_.pose.pose.orientation = dog_imu_.orientation;
     dog_odom_.pose.covariance.fill(0.0);
 

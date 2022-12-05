@@ -11,6 +11,9 @@ cbp unitree_joy_cmd && roseloq
 ros2 run unitree_legged_real ros2_udp highlevel
 ros2 run unitree_legged_real ros_state_helper
 ros2 launch unitree_joy_cmd eloquent_joy_cmd.launch.py
+
+# integrated launch
+ros2 launch unitree_legged_real eloquent_high_level.launch.py
 ros2 run joy joy_node
 ```
 
