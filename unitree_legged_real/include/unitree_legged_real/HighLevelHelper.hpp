@@ -35,7 +35,6 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
 
-
   rclcpp::Subscription<ros2_unitree_legged_msgs::msg::HighState>::SharedPtr
       high_sub_;
 
@@ -49,15 +48,17 @@ private:
 
   geometry_msgs::msg::TransformStamped imu_tf_stamp_;
   geometry_msgs::msg::TransformStamped odom_tf_stamp_;
+  geometry_msgs::msg::TransformStamped base_fp_stamp_;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> imu_broadcaster_;
   std::shared_ptr<tf2_ros::TransformBroadcaster> odom_broadcaster_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> bf_broadcaster_;
 
   // ROS Parameters
   bool publish_tf_;
   bool verbose_;
   bool dimension_3d_;
-  std::string imu_link_id_, base_link_id_, odom_link_id_;
+  std::string imu_link_id_, base_link_id_, odom_link_id_, base_fp_id_;
 
 public:
   HighLevelHelper() : Node("high_level_helper") {
@@ -81,6 +82,7 @@ public:
     imu_link_id_ = this->declare_parameter("imu_link", "imu_link");
     base_link_id_ = this->declare_parameter("base_link", "base_link");
     odom_link_id_ = this->declare_parameter("odom_link", "odom");
+    base_fp_id_ = "base_footprint";
 
     publish_tf_ = this->declare_parameter("publish_tf", true);
     verbose_ = this->declare_parameter("verbose", false);
@@ -131,6 +133,7 @@ public:
     if (publish_tf_) {
       publishImuTF();
       publishOdomTF();
+      publishBPTF();
     }
   }
 
@@ -189,7 +192,7 @@ public:
   parseOdom(const ros2_unitree_legged_msgs::msg::HighState::SharedPtr msg) {
     // Prepare Odom MSG
     dog_odom_.header.frame_id = odom_link_id_;
-    dog_odom_.child_frame_id = base_link_id_;
+    dog_odom_.child_frame_id = base_fp_id_; // base_link_id_;
     dog_odom_.header.stamp = this->get_clock()->now();
 
     // 위치 데이터 - 굴곡진 환경에서 큰 오차를 보이므로 완전히 신뢰할 수는 없다.
@@ -236,6 +239,24 @@ public:
     return true;
   }
 
+  bool publishBPTF() {
+
+    base_fp_stamp_.header.stamp = this->get_clock()->now();
+    base_fp_stamp_.header.frame_id = base_fp_id_;
+    base_fp_stamp_.child_frame_id = base_link_id_;
+    base_fp_stamp_.transform.translation.x = 0.0;
+    base_fp_stamp_.transform.translation.y = 0.0;
+    base_fp_stamp_.transform.translation.z = 0.0;
+    base_fp_stamp_.transform.rotation.x = 0.0;
+    base_fp_stamp_.transform.rotation.y = 0.0;
+    base_fp_stamp_.transform.rotation.z = 0.0;
+    base_fp_stamp_.transform.rotation.w = 1.0;
+
+    bf_broadcaster_->sendTransform(base_fp_stamp_);
+
+    return true;
+  }
+
   /**
    * @brief odom_link_id_를 이름으로 갖는 odom tf frame publish
    * 해당 odom은 unitree 로봇 내에서 자체적으로 계산된 값으로
@@ -249,7 +270,7 @@ public:
 
     odom_tf_stamp_.header.stamp = this->get_clock()->now();
     odom_tf_stamp_.header.frame_id = odom_link_id_;
-    odom_tf_stamp_.child_frame_id = base_link_id_;
+    odom_tf_stamp_.child_frame_id = base_fp_id_; // base_link_id_;
 
     odom_tf_stamp_.transform.translation.x = dog_odom_.pose.pose.position.x;
     odom_tf_stamp_.transform.translation.y = dog_odom_.pose.pose.position.y;
