@@ -51,6 +51,17 @@ def generate_launch_description():
         }],
     )
 
+    unitree_twist_cmd = Node(
+        package='unitree_twist_cmd',
+        node_executable='unitree_twist_cmd',
+        node_name='unitree_twist_cmd',
+        output='screen',
+        parameters=[{
+            "default_mode" : 1,
+            "verbose" : True,
+        }],
+    )
+
     # TODO
     static_transform_publisher = Node(
         package='tf2_ros',
@@ -63,5 +74,6 @@ def generate_launch_description():
         ros2_udp,
         ros_state_helper,
         unitree_joy_cmd,
+        unitree_twist_cmd,
         static_transform_publisher,
     ])
