@@ -73,7 +73,7 @@ def generate_launch_description():
     return launch.LaunchDescription([
         ros2_udp,
         ros_state_helper,
-        unitree_joy_cmd,
+        # unitree_joy_cmd,
         unitree_twist_cmd,
         static_transform_publisher,
     ])
