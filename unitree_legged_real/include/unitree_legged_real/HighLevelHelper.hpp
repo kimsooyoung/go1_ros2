@@ -78,6 +78,7 @@ public:
 
     imu_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
     odom_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
+    bf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
 
     imu_link_id_ = this->declare_parameter("imu_link", "imu_link");
     base_link_id_ = this->declare_parameter("base_link", "base_link");
